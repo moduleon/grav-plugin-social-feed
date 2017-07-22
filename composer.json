@@ -1,0 +1,12 @@
+{
+    "require": {
+        "facebook/php-sdk-v4" : "4.0.*",
+        "php-instagram-api/php-instagram-api": "dev-master",
+        "themattharris/tmhoauth": "~0.8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Grav\\Plugin\\SocialFeed\\": "src/"
+        }
+    }
+}
