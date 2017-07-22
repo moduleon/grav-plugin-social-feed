@@ -1,6 +1,8 @@
 <?php
 
-namespace Grav\Plugin\Twig;
+namespace Grav\Plugin\SocialFeed\Twig;
+
+use Grav\Plugin\SocialFeed\Manager\PostManager;
 
 /**
  * PostExtension allows to fetch posts from twig templates.
@@ -40,6 +42,6 @@ class PostExtension extends \Twig_Extension
     {
         $manager = new PostManager();
 
-        return $manager->findBy($params);
+        return $manager->getPosts($params);
     }
 }
