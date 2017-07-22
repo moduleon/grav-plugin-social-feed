@@ -34,7 +34,7 @@ class PostExtension extends \Twig_Extension
     /**
      * Get posts according to given parameters.
      *
-     * @param  array  $params
+     * @param array $params
      *
      * @return array
      */

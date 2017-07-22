@@ -28,7 +28,7 @@ class PostManager
     /**
      * Get posts according to given parameters.
      *
-     * @param  array  $params
+     * @param array $params
      *
      * @return array
      */
@@ -61,6 +61,7 @@ class PostManager
                 if (SORT_DESC === $orderDir) {
                     $result *= -1;
                 }
+
                 return $result;
             }
         });
@@ -74,7 +75,7 @@ class PostManager
             'total' => $total,
             'limit' => $limit,
             'page' => $page,
-            'posts' => array_splice($posts, $offset, $limit)
+            'posts' => array_splice($posts, $offset, $limit),
         );
     }
 
