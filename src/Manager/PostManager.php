@@ -148,6 +148,8 @@ class PostManager
                 $filename = $this->downloadFile($post->getAuthorFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setAuthorFileUrl(null);
                 }
             }
         }
@@ -160,6 +162,8 @@ class PostManager
                 $filename = $this->downloadFile($post->getFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setFileUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setFileUrl(null);
                 }
             }
         }
