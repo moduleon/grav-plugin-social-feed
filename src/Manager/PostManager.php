@@ -70,12 +70,21 @@ class PostManager
         $limit = isset($params['limit']) ? (int) $params['limit'] : 10;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
         $offset = ($page * $limit) - $limit;
+        $posts = array_splice($posts, $offset, $limit);
+        // Absolute url
+        if ($this->grav['config']->get('system.absolute_urls')) {
+            $baseUrl = $this->grav['pages']->baseUrl();
+            foreach ($posts as $key => $post) {
+                $posts[$key]['fileUrl'] = $post['fileUrl'] ? $baseUrl.$post['fileUrl'] : null;
+                $posts[$key]['authorFileUrl'] = $post['authorFileUrl'] ? $baseUrl.$post['authorFileUrl'] : null;
+            }
+        }
 
         return array(
             'total' => $total,
             'limit' => $limit,
             'page' => $page,
-            'posts' => array_splice($posts, $offset, $limit),
+            'posts' => $posts,
         );
     }
 
@@ -126,7 +135,7 @@ class PostManager
     public function storeAttachments(Post $post)
     {
         $locator = $this->grav['locator'];
-        $uploadDir = $locator->findResource('theme://media', true, true);
+        $uploadDir = $locator->findResource('user://media', true, true);
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir);
         }
@@ -139,6 +148,8 @@ class PostManager
                 $filename = $this->downloadFile($post->getAuthorFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setAuthorFileUrl(null);
                 }
             }
         }
@@ -151,6 +162,8 @@ class PostManager
                 $filename = $this->downloadFile($post->getFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setFileUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setFileUrl(null);
                 }
             }
         }
@@ -179,7 +192,8 @@ class PostManager
         if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
             $filename = $basename.'.'.$ext;
             $destination = $dir.'/'.$filename;
-            rename($storageFile, $destination);
+            copy($storageFile, $destination);
+            unlink($storageFile);
 
             return $filename;
         }
@@ -192,9 +206,7 @@ class PostManager
      */
     private function getMediaUrl()
     {
-        $config = $this->grav['config'];
-
-        return $config->get('system.custom_base_url').'/user/themes/'.$config->get('system.pages.theme').'/media';
+        return '/user/media';
     }
 
     /**
