@@ -192,7 +192,8 @@ class PostManager
         if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
             $filename = $basename.'.'.$ext;
             $destination = $dir.'/'.$filename;
-            rename($storageFile, $destination);
+            copy($storageFile, $destination);
+            unlink($storageFile);
 
             return $filename;
         }
