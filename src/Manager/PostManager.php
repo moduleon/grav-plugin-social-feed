@@ -70,12 +70,21 @@ class PostManager
         $limit = isset($params['limit']) ? (int) $params['limit'] : 10;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
         $offset = ($page * $limit) - $limit;
+        $posts = array_splice($posts, $offset, $limit);
+        // Absolute url
+        if ($this->grav['config']->get('system.absolute_urls')) {
+            $baseUrl = $this->grav['pages']->baseUrl();
+            foreach ($posts as $key => $post) {
+                $posts[$key]['fileUrl'] = $post['fileUrl'] ? $baseUrl.$post['fileUrl'] : null;
+                $posts[$key]['authorFileUrl'] = $post['authorFileUrl'] ? $baseUrl.$post['authorFileUrl'] : null;
+            }
+        }
 
         return array(
             'total' => $total,
             'limit' => $limit,
             'page' => $page,
-            'posts' => array_splice($posts, $offset, $limit),
+            'posts' => $posts,
         );
     }
 
@@ -126,7 +135,7 @@ class PostManager
     public function storeAttachments(Post $post)
     {
         $locator = $this->grav['locator'];
-        $uploadDir = $locator->findResource('theme://media', true, true);
+        $uploadDir = $locator->findResource('user://media', true, true);
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir);
         }
@@ -192,9 +201,7 @@ class PostManager
      */
     private function getMediaUrl()
     {
-        $config = $this->grav['config'];
-
-        return $config->get('system.custom_base_url').'/user/themes/'.$config->get('system.pages.theme').'/media';
+        return '/user/media';
     }
 
     /**

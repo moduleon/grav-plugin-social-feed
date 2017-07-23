@@ -59,9 +59,9 @@ $ composer update
 
 In your dashboard, go to `Plugins > Social Feed`, and make sure the plugin is enabled. Then, fill out in the form the api informations and usernames to follow regarding to the social network(s) you want to fetch posts from.
 
-### Set image base url:
+### Absolute urls:
 
-By default, all images are downloaded in your theme folder, in a media subfolder. All media will have a relative url like '/user/themes/my-theme/media/filename.ext'. If you want absolute urls, set up a custom_base_url in user/config/system.yaml.
+By default, all images are downloaded in your user folder, in a media subfolder. All media will have a relative url like '/user/media/filename.ext'. If you want absolute urls, set `absolute_urls` to true in `user/config/system.yaml`.
 
 ## Usage
 
@@ -145,7 +145,7 @@ This will return a response like this:
             "postId": "794443718241775616",
             "authorUsername": "moduleon",
             "authorName": "moduleon",
-            "authorFileUrl": "/user/themes/antimatter/media/twitter_moduleon.jpeg",
+            "authorFileUrl": "/user/media/twitter_moduleon.jpeg",
             "headline": "A Todo MVC example of Nucleon is out!\nhttps://t.co/lJEZ4AJbeG",
             "body": "A Todo MVC example of Nucleon is out!\n<a href=\"https://github.com/moduleon/todomvc/tree/develop/examples/nucleon\" target=\"_blank\">https://github.com/moduleon/todomvc/tree/develop/examples/nucleon</a>",
             "fileUrl": null,
