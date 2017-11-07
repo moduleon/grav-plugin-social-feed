@@ -1,3 +1,11 @@
+# v0.1.2
+##  11/07/2017
+
+1. [](#improved)
+    * Versionning vendor, and registering namespaces with autoload
+1. [](#bugfix)
+    * Removing some php 7 instructions
+
 # v0.1.1
 ##  07/23/2017
 
