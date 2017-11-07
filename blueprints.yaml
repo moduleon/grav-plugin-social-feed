@@ -1,5 +1,5 @@
 name: Social Feed
-version: 0.1.1
+version: 0.1.2
 description: This Grav plugin allow you to fetch feeds from social networks, and give you tools for displaying them in your website.
 icon: share-alt
 author:
