@@ -39,6 +39,8 @@ class SocialFeedPlugin extends Plugin
             return;
         }
 
+        require_once __DIR__.'/vendor/autoload.php';
+
         $uri = $this->grav['uri'];
         if (false !== strpos($uri->path(), '/social-posts')) {
             return $this->getPosts();
