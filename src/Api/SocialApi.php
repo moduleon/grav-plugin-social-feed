@@ -39,7 +39,7 @@ abstract class SocialApi
      *
      * @return Post[]
      */
-    public function getUserPostObjects($username): array
+    public function getUserPostObjects($username)
     {
         $socialPosts = $this->getUserPosts($username);
         $postObjectList = [];

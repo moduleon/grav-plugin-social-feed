@@ -134,7 +134,7 @@ final class FacebookApi extends SocialApi
      *
      * @return GraphObject
      */
-    private function requestGet($method, $parameters = array()): GraphObject
+    private function requestGet($method, $parameters = array())
     {
         $response = (new FacebookRequest($this->api, 'GET', $method, $parameters, 'v2.4'))->execute();
 
