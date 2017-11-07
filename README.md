@@ -24,35 +24,6 @@ You should now have all the plugin files under
 
 > NOTE: This plugin is a modular component for Grav which requires [Grav](http://github.com/getgrav/grav) and the [Error](https://github.com/getgrav/grav-plugin-error) and [Problems](https://github.com/getgrav/grav-plugin-problems) to operate.
 
-Next, update your `composer.json`:
-
-- First, add dependencies and a custom autoload:
-
-```json
-    "require": {
-        ...
-        "facebook/php-sdk-v4" : "4.0.*",
-        "php-instagram-api/php-instagram-api": "dev-master",
-        "themattharris/tmhoauth": "~0.8.4"
-    },
-    ...
-    "autoload": {
-        "psr-4": {
-            ...
-            "Grav\\Plugin\\SocialFeed\\": "user/plugins/social-feed/src/"
-        },
-        ...
-    },
-    ...
-```
-
-- Then, run the update
-
-```
-$ composer self-update
-$ composer update
-```
-
 ## Configuration
 
 ### Set up apis configuration:

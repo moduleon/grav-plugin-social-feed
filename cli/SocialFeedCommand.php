@@ -37,6 +37,8 @@ class SocialFeedCommand extends ConsoleCommand
      */
     protected function serve()
     {
+        require_once __DIR__.'/../vendor/autoload.php';
+
         $posts = array();
         $manager = new PostManager(true);
         $config = self::$grav['config']->get('plugins.social-feed');
