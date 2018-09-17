@@ -180,7 +180,21 @@ class PostManager
      */
     private function downloadFile($url, $basename, $dir)
     {
-        $fileContents = @file_get_contents($url);
+    	$arrContextOptions = [];
+
+    	$config = $this->grav['config']->get('plugins.social-feed');
+
+        if (isset($config['enablessl']) && $config['enablessl'] == false) {
+        	$arrContextOptions['ssl']['verify_peer'] = 0;
+        	$arrContextOptions['ssl']['verify_peer_name'] = 0;
+        }
+
+        if (isset($config['certpath']) && $config['certpath']) {
+        	$arrContextOptions['ssl']['cafile'] = $config['certpath'];
+        }
+        print_r($arrContextOptions);
+
+        $fileContents = @file_get_contents($url, false, stream_context_create($arrContextOptions));
         if (!$fileContents || strstr($fileContents, '<!DOCTYPE html>')) {
             return;
         }
