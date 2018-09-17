@@ -196,7 +196,7 @@ class PostManager
         if (!$fileContents || strstr($fileContents, '<!DOCTYPE html>')) {
             return;
         }
-        
+
         $storageFile = tempnam(sys_get_temp_dir(), 'SocialFeed');
         file_put_contents($storageFile, $fileContents);
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
