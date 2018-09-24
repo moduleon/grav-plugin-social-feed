@@ -192,12 +192,12 @@ class PostManager
         if (isset($config['certpath']) && $config['certpath']) {
         	$arrContextOptions['ssl']['cafile'] = $config['certpath'];
         }
-        print_r($arrContextOptions);
 
         $fileContents = @file_get_contents($url, false, stream_context_create($arrContextOptions));
         if (!$fileContents || strstr($fileContents, '<!DOCTYPE html>')) {
             return;
         }
+        
         $storageFile = tempnam(sys_get_temp_dir(), 'SocialFeed');
         file_put_contents($storageFile, $fileContents);
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
