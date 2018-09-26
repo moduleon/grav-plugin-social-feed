@@ -24,6 +24,21 @@ form:
         0: Disabled
       validate:
         type: bool
+    enablessl:
+      type: toggle
+      label: Enable SSL
+      highlight: 1
+      default: 1
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
+    certpath:
+      type: text
+      label: 'Path to SSL Cert (cafile)'
+      placeholder: default
+      help: 'Leave blank, if not known'
     twitter:
       type: section
       title: Twitter config
