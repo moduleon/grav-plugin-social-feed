@@ -88,7 +88,7 @@ form:
           label: Access token
         instagram_feeds:
           type: list
-          label: Accounts to follow
+          label: Accounts to follow (provide only the one corresponding to your access token)
           fields:
             .username:
               type: text
