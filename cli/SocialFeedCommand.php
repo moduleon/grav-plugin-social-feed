@@ -15,6 +15,8 @@ use Grav\Plugin\SocialFeed\Manager\PostManager;
  */
 class SocialFeedCommand extends ConsoleCommand
 {
+    static $grav;
+
     public function __construct($name = null)
     {
         parent::__construct($name);
