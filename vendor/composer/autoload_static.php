@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit47a26cd86494131f8267bb12fe52e5b5
 {
+    public static $files = array (
+        'c65d09b6820da036953a371c8c73a9b1' => __DIR__ . '/..' . '/facebook/graph-sdk/src/Facebook/polyfills.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'G' => 
         array (
@@ -24,7 +28,7 @@ class ComposerStaticInit47a26cd86494131f8267bb12fe52e5b5
         ),
         'Facebook\\' => 
         array (
-            0 => __DIR__ . '/..' . '/facebook/php-sdk-v4/src/Facebook',
+            0 => __DIR__ . '/..' . '/facebook/graph-sdk/src/Facebook',
         ),
     );
 
