@@ -32,9 +32,9 @@ final class InstagramApi extends SocialApi
     /**
      * {@inherit}.
      */
-    public function getUserPosts($username)
+    public function getUserPosts($feed)
     {
-        $user = $this->api->getCurrentUser($username);
+        $user = $this->api->getCurrentUser($feed['username']);
         $media = $user->getMedia();
 
         return $media->getData();

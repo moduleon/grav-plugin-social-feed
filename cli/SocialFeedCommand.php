@@ -47,7 +47,7 @@ class SocialFeedCommand extends ConsoleCommand
         foreach ($this->getReadyApis() as $networkName => $api) {
             foreach ($config[$networkName.'_feeds'] as $feed) {
                 try {
-                    foreach ($api->getUserPostObjects($feed['username']) as $post) {
+                    foreach ($api->getUserPostObjects($feed) as $post) {
                         $manager->storeAttachments($post);
                         $posts[] = $post;
                     }

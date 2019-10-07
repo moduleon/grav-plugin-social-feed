@@ -21,11 +21,11 @@ abstract class SocialApi
     protected $providerName;
 
     /**
-     * @param string $username
+     * @param array $feed
      *
      * @return array[]|\stdClass[]
      */
-    abstract public function getUserPosts($username);
+    abstract public function getUserPosts($feed);
 
     /**
      * @param \stdClass|array $socialPost
@@ -39,9 +39,10 @@ abstract class SocialApi
      *
      * @return Post[]
      */
-    public function getUserPostObjects($username)
+    public function getUserPostObjects($feed)
     {
-        $socialPosts = $this->getUserPosts($username);
+
+        $socialPosts = $this->getUserPosts($feed);
         $postObjectList = [];
 
         foreach ($socialPosts as $socialPost) {
