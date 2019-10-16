@@ -1,3 +1,13 @@
+# v0.2.0
+##  16/10/2019
+
+1. [](#new)
+	* fetch facebook posts with site key
+1. [](#improved)
+    * update php skd
+1. [](#bugfix)
+    * fix static error which occurs with php 7.2 or greater
+
 # v0.1.2
 ##  11/07/2017
 
