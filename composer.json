@@ -1,8 +1,8 @@
 {
     "require": {
-        "facebook/php-sdk-v4" : "4.0.*",
         "php-instagram-api/php-instagram-api": "dev-master",
-        "themattharris/tmhoauth": "~0.8.4"
+        "themattharris/tmhoauth": "~0.8.4",
+        "facebook/graph-sdk": "^5.7"
     },
     "autoload": {
         "psr-4": {

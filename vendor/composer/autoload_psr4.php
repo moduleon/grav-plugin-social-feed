@@ -7,5 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Grav\\Plugin\\SocialFeed\\' => array($baseDir . '/src'),
-    'Facebook\\' => array($vendorDir . '/facebook/php-sdk-v4/src/Facebook'),
+    'Facebook\\' => array($vendorDir . '/facebook/graph-sdk/src/Facebook'),
 );

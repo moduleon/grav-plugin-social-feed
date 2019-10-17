@@ -2,11 +2,8 @@
 
 namespace Grav\Plugin\SocialFeed\Api;
 
-use Facebook\FacebookRequest;
-use Facebook\FacebookSession;
-use Facebook\Entities\AccessToken;
-use Facebook\GraphObject;
 use Grav\Plugin\SocialFeed\Model\Post;
+use Facebook\Facebook;
 
 final class FacebookApi extends SocialApi
 {
@@ -16,31 +13,36 @@ final class FacebookApi extends SocialApi
     protected $providerName = 'facebook';
 
     /**
+     * @var string
+     */
+    protected $accessToken = '';
+
+    /**
      * @param array $oAuthConfig
      */
     public function __construct($oAuthConfig)
     {
-        FacebookSession::setDefaultApplication($oAuthConfig['app_id'], $oAuthConfig['app_secret']);
-
-        $accessToken = AccessToken::requestAccessToken(array('grant_type' => 'client_credentials'));
-        $this->api = new FacebookSession($accessToken);
+        $this->api = new Facebook([
+            'app_id' => $oAuthConfig['app_id'],
+            'app_secret' => $oAuthConfig['app_secret'],
+            'default_graph_version' => 'v3.2',
+            'default_access_token' => $oAuthConfig['app_id'].'|'.$oAuthConfig['app_secret'],
+        ]);
     }
 
     /**
      * {@inherit}.
      */
-    public function getUserPosts($username)
+    public function getUserPosts($feed)
     {
-        try {
-            $parameters = array('fields' => 'message,link,from,full_picture,created_time,object_id');
-            $data = $this->requestGet('/'.$username.'/posts', $parameters);
-        } catch (\Exception $ex) {
-            echo $ex->getMessage();
-
-            return array();
+        //save user accesstoken if is set
+        if(isset($feed['accesstoken']) && !empty($feed['accesstoken'])) {
+            $this->accessToken = $feed['accesstoken'];
         }
 
-        return $data->asArray()['data'];
+        $parameters = '?fields=full_picture,from,message,id,permalink_url,created_time';
+        $response = $this->requestGet('/'.$feed['username'].'/posts' . $parameters);
+        return $response->getGraphEdge();
     }
 
     /**
@@ -48,74 +50,55 @@ final class FacebookApi extends SocialApi
      */
     protected function getMappedPostObject($socialPost)
     {
+
         $post = new Post();
 
-        if (!isset($socialPost->message)) {
+        //body
+        $message = $this->getFormattedTextFromPost($socialPost->getField('message'));
+        if (!isset($message)) {
             return false;
         }
+        $post->setBody($message);
 
-        $post->setProvider($this->providerName);
-        $post->setPostId($socialPost->id);
-
-        $parameters = array('fields' => 'username');
-        $rawUserDetails = $this->requestGet('/'.$socialPost->from->id, $parameters);
-
-        $userDetails = $rawUserDetails->asArray();
+        //creator username and image
+        $from = $socialPost->getField('from');
+        $rawUserDetails = $this->requestGet('/' . $from['id'] . '?fields=username,picture');
+        $userDetails = $rawUserDetails->getGraphNode();
 
         if (empty($userDetails)) {
             return false;
         }
 
-        $post->setAuthorUsername($userDetails['username']);
-        $post->setAuthorName($socialPost->from->name);
-        $post->setAuthorFileUrl('https://graph.facebook.com/'.$socialPost->from->id.'/picture');
-        $post->setHeadline(strip_tags($socialPost->message));
+        $post->setAuthorName($from['name']);
+        $post->setAuthorUsername($userDetails->getField('username'));
+        $post->setAuthorFileUrl($userDetails->getField('picture')['url']);
 
-        $message = $this->getFormattedTextFromPost($socialPost);
-        $post->setBody($message);
-
-        if (isset($socialPost->full_picture) && !empty($socialPost->full_picture)) {
-            $file = $socialPost->full_picture;
-
-            // A picture is set, use the original url as a backup
+        //post image
+        $fullPicture = $socialPost->getField('full_picture');
+        if (isset($fullPicture) && !empty($fullPicture)) {
+            $file = $socialPost->getField('full_picture');
             $post->setFileUrl($file);
-
-            // If there is an object_id, then the original file may be available, so check for that one
-            if (isset($socialPost->object_id)) {
-                $rawImageDetails = $this->requestGet('/'.$socialPost->object_id, array('fields' => 'images'));
-                $imageDetails = $rawImageDetails->asArray();
-
-                if (isset($imageDetails['images'][0]->source)) {
-                    $post->setFileUrl($imageDetails['images'][0]->source);
-                }
-            } else {
-                // Check if it is an external image, if so, use the original one.
-                $pictureUrlData = parse_url($socialPost->full_picture);
-                if (1 === preg_match('#^(fb)?external#', $pictureUrlData['host'])) {
-                    parse_str($pictureUrlData['query'], $pictureUrlQueryData);
-                    if (isset($pictureUrlQueryData['url'])) {
-                        $post->setFileUrl($pictureUrlQueryData['url']);
-                    }
-                }
-            }
         }
 
-        $post->setLink('https://www.facebook.com/'.$socialPost->id);
-        $post->setPublishedAt(new \DateTime($socialPost->created_time));
+        //other params
+        $post->setHeadline(strip_tags($socialPost->getField('message')));
+        $post->setPostId($socialPost->getField('id'));
+        $post->setProvider($this->providerName);
+        $post->setLink($socialPost->getField('permalink_url'));
+        $post->setPublishedAt($socialPost->getField('created_time'));
 
         return $post;
     }
 
     /**
-     * Get formated text from post.
+     * Format text
      *
-     * @param \stdClass $socialPost
+     * @param string $text
      *
      * @return string
      */
-    private function getFormattedTextFromPost(\stdClass $socialPost)
+    private function getFormattedTextFromPost($text)
     {
-        $text = $socialPost->message;
         // Add href for links prefixed with ***:// (*** is most likely to be http(s) or ftp
         $text = preg_replace("#(^|[\n ])([\w]+?://[\w]+[^ \"\n\r\t< ]*)#", '\\1<a href="\\2" target="_blank">\\2</a>', $text);
         // Add href for links starting with www or ftp
@@ -129,15 +112,25 @@ final class FacebookApi extends SocialApi
     /**
      * Send a GET request.
      *
-     * @param string $method
-     * @param array  $parameters
+     * @param string $url
      *
-     * @return GraphObject
+     * @return getGraphNode
      */
-    private function requestGet($method, $parameters = array())
+    private function requestGet($url)
     {
-        $response = (new FacebookRequest($this->api, 'GET', $method, $parameters, 'v2.4'))->execute();
-
-        return $response->getGraphObject();
+        try {
+            // Returns a `FacebookFacebookResponse` object
+            $response = $this->api->get(
+                $url,
+                $this->accessToken
+            );
+        } catch(FacebookExceptionsFacebookResponseException $e) {
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch(FacebookExceptionsFacebookSDKException $e) {
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+        return $response;
     }
 }

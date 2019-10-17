@@ -22,12 +22,12 @@ final class TwitterApi extends SocialApi
     /**
      * {@inherit}.
      */
-    public function getUserPosts($username)
+    public function getUserPosts($feed)
     {
         $data = $this->requestGet(
             'statuses/user_timeline',
             array(
-                'screen_name' => $username,
+                'screen_name' => $feed['username'],
                 'exclude_replies' => true,
                 'include_rts' => false,
                 'count' => 20,
