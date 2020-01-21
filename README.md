@@ -79,6 +79,7 @@ You can even pass parameters to the `socialPosts()` function:
 | page      | integer | 1             |
 | usernames | array   | empty         |
 | providers | array   | empty         |
+| duplicated| boolean | true          |
 
 For example:
 
