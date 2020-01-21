@@ -152,8 +152,6 @@ class PostManager
             }
         }
 
-        print_r($content);
-
         if ($updated) {
             $file->content($content);
             $file->save();
