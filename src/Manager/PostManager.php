@@ -69,8 +69,24 @@ class PostManager
         $total = count($posts);
         $limit = isset($params['limit']) ? (int) $params['limit'] : 10;
         $page = isset($params['page']) ? (int) $params['page'] : 1;
+        $duplicated = isset($params['duplicated']) ? (boolean) $params['duplicated'] : true;
         $offset = ($page * $limit) - $limit;
+
+        //remove duplicated posts
+        if($duplicated == false) {
+            $tmpPosts = $posts;
+            unset($posts);
+            $posts = [];
+
+            foreach ($tmpPosts as $key => $post) {
+                if($post['duplicated'] != true) {
+                    $posts[$post['provider'].'_'.$post['postId']] = $post;
+                }
+            }
+        }
+
         $posts = array_splice($posts, $offset, $limit);
+
         // Absolute url
         if ($this->grav['config']->get('system.absolute_urls')) {
             $baseUrl = $this->grav['pages']->baseUrl();
@@ -113,7 +129,22 @@ class PostManager
                     'fileUrl' => $post->getFileUrl(),
                     'link' => $post->getLink(),
                     'publishedAt' => $post->getPublishedAt()->format('Y-m-d H:i:s'),
+                    'duplicated' => false,
+                    'originalPostId' => ''
                 ];
+
+                //check if posts already exist from other provider
+                foreach ($content as &$storedPost) {
+                    if((strlen($post->getHeadline()) > 0 && $storedPost['headline'] == $post->getHeadline()) || (strlen($post->getBody()) > 0 && $storedPost['body'] == $post->getBody())) {
+                        //check if stored posts is already duplicate from this post
+                        if($storedPost['originalPostId'] != $arrayPost['postId']) {
+                            $arrayPost['duplicated'] = true;
+                            $arrayPost['originalPostId'] = $storedPost['postId'];
+                            break;
+                        }
+                    }
+                }
+
                 $event = new Event(['post' => $arrayPost]);
                 $this->grav->fireEvent('onSocialPostBeforeSave', $event);
                 $arrayPost = $event->offsetGet('post');
@@ -165,6 +196,10 @@ class PostManager
                 } else {
                     $post->setFileUrl(null);
                 }
+            } else {
+                // set file if found locally
+                $filepath = explode('/', $files[0]);
+                $post->setFileUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
             }
         }
     }

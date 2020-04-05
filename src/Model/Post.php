@@ -58,6 +58,16 @@ class Post
     private $publishedAt;
 
     /**
+     * @var boolean
+     */
+    private $duplicated;
+
+    /**
+     * @var string
+     */
+    private $originalPostId;
+
+    /**
      * @return string
      */
     public function getProvider()
@@ -273,5 +283,45 @@ class Post
                 return 'https://instagram.com/'.$this->getAuthorUsername();
                 break;
         }
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDuplicated()
+    {
+        return $this->duplicated;
+    }
+
+    /**
+     * @param boolean $duplicated
+     *
+     * @return Post
+     */
+    public function setDuplicated($duplicated)
+    {
+        $this->duplicated = $duplicated;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalPostId()
+    {
+        return $this->originalPostId;
+    }
+
+    /**
+     * @param string $originalPostId
+     *
+     * @return Post
+     */
+    public function setOriginalPostId($originalPostId)
+    {
+        $this->originalPostId = $originalPostId;
+
+        return $this;
     }
 }

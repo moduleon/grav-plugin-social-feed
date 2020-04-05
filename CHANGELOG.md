@@ -1,3 +1,11 @@
+# v0.3.0
+##  21/01/2020
+
+1. [](#new)
+	* option to prevent duplicate posts from appearing based on the text
+1. [](#improved)
+    * if an image of a post has already been downloaded, use it instead of the remote url
+
 # v0.2.0
 ##  16/10/2019
 
