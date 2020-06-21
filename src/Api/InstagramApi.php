@@ -2,6 +2,7 @@
 
 namespace Grav\Plugin\SocialFeed\Api;
 
+use Grav\Common\Grav;
 use Grav\Plugin\SocialFeed\Model\Post;
 use Instagram\Instagram;
 
@@ -12,27 +13,25 @@ final class InstagramApi extends SocialApi
      */
     protected $providerName = 'instagram';
 
-
     /**
-     * @param array $oAuthConfig
+     * @var array
      */
-    public function __construct($oAuthConfig)
-    {
-    }
+    private $config;
 
     /**
      * {@inherit}.
      */
     public function getUserPosts($feed)
     {
+
         //save user accesstoken if is set
-        if(isset($feed['userid']) && !empty($feed['access_token'])) {
+        if(isset($feed['userid']) && !empty($feed['userid'])) {
             $this->config['userid'] = $feed['userid'];
             $this->config['access_token'] = "&access_token=".$feed['access_token'];
+            $this->config['avatar'] = array_key_first($feed['avatar']);
 
             $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username';
             $response = $this->requestGet('https://graph.instagram.com/'.$this->config['userid'].'/media' . $fields);
-            $response = json_decode($response, true);
             return $response['data'];
         }
 
@@ -54,10 +53,11 @@ final class InstagramApi extends SocialApi
          * For now it is not possible to get name and avatar by instagram api
          * @todo fetch user media as soon as it is possible by instagram api
          */
+        $post->setAuthorFileUrl($this->config['avatar']);
         //$fields = '?fields=account_type,id,media_count,username';
         //$userData = $this->requestGet('https://graph.instagram.com/' . $this->config['userid'] . $fields);
         //$post->setAuthorName($userData['name']);
-        //$post->setAuthorFileUrl($userData['avatar]);
+        //$post->setAuthorFileUrl($userData['avatar']);
 
         $post->setHeadline(strip_tags($socialPost['caption']));
 
@@ -108,10 +108,10 @@ final class InstagramApi extends SocialApi
         }
 
         if($response == false) {
-            echo "Something went wrong by getting the data of user: " . $this->config['userid'];
+            echo "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['userid'];
             exit;
         }
 
-        return $response;
+        return json_decode($response, true);
     }
 }

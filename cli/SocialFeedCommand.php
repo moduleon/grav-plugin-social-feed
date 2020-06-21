@@ -71,14 +71,9 @@ class SocialFeedCommand extends ConsoleCommand
         $config = self::$grav['config']->get('plugins.social-feed');
         // Facebook api
         if (
-            isset($config['facebook_app_id']) && $config['facebook_app_id'] &&
-            isset($config['facebook_app_secret']) && $config['facebook_app_secret'] &&
             isset($config['facebook_feeds']) && count($config['facebook_feeds']) > 0
         ) {
-            $apis['facebook'] = new FacebookApi([
-                'app_id' => $config['facebook_app_id'],
-                'app_secret' => $config['facebook_app_secret'],
-            ]);
+            $apis['facebook'] = new FacebookApi();
         }
         // Twitter api
         if (
@@ -96,10 +91,7 @@ class SocialFeedCommand extends ConsoleCommand
             isset($config['instagram_feeds']) && count($config['instagram_feeds']) > 0
         ) {
             foreach ($config['instagram_feeds'] as $instagram_feed) {
-                $apis['instagram'] = new InstagramApi([
-                    'userid' => $config['userid'],
-                    'access_token' => $config['access_token'],
-                ]);
+                $apis['instagram'] = new InstagramApi();
             }
         }
 

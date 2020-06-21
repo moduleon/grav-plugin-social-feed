@@ -62,12 +62,6 @@ form:
       title: Facebook config
       underline: true
       fields:
-        facebook_app_id:
-          type: text
-          label: App id
-        facebook_app_secret:
-          type: text
-          label: App secret
         facebook_feeds:
           type: list
           label: Accounts to follow

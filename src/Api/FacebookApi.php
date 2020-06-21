@@ -13,22 +13,9 @@ final class FacebookApi extends SocialApi
     protected $providerName = 'facebook';
 
     /**
-     * @var string
+     * @var array
      */
-    protected $accessToken = '';
-
-    /**
-     * @param array $oAuthConfig
-     */
-    public function __construct($oAuthConfig)
-    {
-        $this->api = new Facebook([
-            'app_id' => $oAuthConfig['app_id'],
-            'app_secret' => $oAuthConfig['app_secret'],
-            'default_graph_version' => 'v3.2',
-            'default_access_token' => $oAuthConfig['app_id'].'|'.$oAuthConfig['app_secret'],
-        ]);
-    }
+    private $config;
 
     /**
      * {@inherit}.
@@ -36,13 +23,14 @@ final class FacebookApi extends SocialApi
     public function getUserPosts($feed)
     {
         //save user accesstoken if is set
-        if(isset($feed['accesstoken']) && !empty($feed['accesstoken'])) {
-            $this->accessToken = $feed['accesstoken'];
+        if(isset($feed['username']) && !empty($feed['username'])) {
+            $this->config['username'] = $feed['username'];
+            $this->config['access_token'] = "&access_token=".$feed['accesstoken'];
         }
 
-        $parameters = '?fields=full_picture,from,message,id,permalink_url,created_time';
-        $response = $this->requestGet('/'.$feed['username'].'/posts' . $parameters);
-        return $response->getGraphEdge();
+        $fields = '?fields=full_picture,from,message,id,permalink_url,created_time';
+        $response = $this->requestGet('https://graph.facebook.com/'.$this->config['username'].'/posts' . $fields);
+        return $response['data'];
     }
 
     /**
@@ -50,42 +38,38 @@ final class FacebookApi extends SocialApi
      */
     protected function getMappedPostObject($socialPost)
     {
-
         $post = new Post();
 
         //body
-        $message = $this->getFormattedTextFromPost($socialPost->getField('message'));
+        $message = $this->getFormattedTextFromPost($socialPost['message']);
         if (!isset($message)) {
             return false;
         }
         $post->setBody($message);
 
         //creator username and image
-        $from = $socialPost->getField('from');
-        $rawUserDetails = $this->requestGet('/' . $from['id'] . '?fields=username,picture');
-        $userDetails = $rawUserDetails->getGraphNode();
+        $fields = '?fields=username,picture';
+        $userDetails = $this->requestGet('https://graph.facebook.com/'.$socialPost['from']['id'] . $fields);
 
         if (empty($userDetails)) {
             return false;
         }
 
-        $post->setAuthorName($from['name']);
-        $post->setAuthorUsername($userDetails->getField('username'));
-        $post->setAuthorFileUrl($userDetails->getField('picture')['url']);
+        $post->setAuthorName($socialPost['from']['name']);
+        $post->setAuthorUsername($userDetails['username']);
+        $post->setAuthorFileUrl($userDetails['picture']['data']['url']);
 
         //post image
-        $fullPicture = $socialPost->getField('full_picture');
-        if (isset($fullPicture) && !empty($fullPicture)) {
-            $file = $socialPost->getField('full_picture');
-            $post->setFileUrl($file);
-        }
+        $post->setFileUrl($socialPost['full_picture']);
 
         //other params
-        $post->setHeadline(strip_tags($socialPost->getField('message')));
-        $post->setPostId($socialPost->getField('id'));
+        $post->setHeadline(strip_tags($socialPost['message']));
+        $post->setPostId($socialPost['id']);
         $post->setProvider($this->providerName);
-        $post->setLink($socialPost->getField('permalink_url'));
-        $post->setPublishedAt($socialPost->getField('created_time'));
+        $post->setLink($socialPost['permalink_url']);
+
+        $publishAt = new \DateTime($socialPost['created_time']);
+        $post->setPublishedAt($publishAt);
 
         return $post;
     }
@@ -119,18 +103,18 @@ final class FacebookApi extends SocialApi
     private function requestGet($url)
     {
         try {
-            // Returns a `FacebookFacebookResponse` object
-            $response = $this->api->get(
-                $url,
-                $this->accessToken
-            );
-        } catch(FacebookExceptionsFacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
-        } catch(FacebookExceptionsFacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            $response = @file_get_contents($url . $this->config['access_token']);
+        }
+        catch (Exception $e) {
+            echo $e->getMessage();
             exit;
         }
-        return $response;
+
+        if($response == false) {
+            echo "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['username'];
+            exit;
+        }
+
+        return json_decode($response, true);
     }
 }

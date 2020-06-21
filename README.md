@@ -172,6 +172,13 @@ There can be found many instructions on the internet. But most are outdated and 
 You need to create an app and keys on Facebook for Developers. This is a very good and actual manual: 
 https://levelup.gitconnected.com/getting-started-with-the-instagram-basic-display-api-5124c92c4935 
 
+### Facebook
+1. Create an Facebook App on https://developers.facebook.com/
+1. Create Access Token with manage_pages right with Graph API Explorer
+1. Generate Long Lived Access Token with Access Token Debugger
+1. Build Social Feed on your web page
+1. Go through app review for manage_pages
+
 ## Credits
 
 This plugin is mostly inspired by the symfony bundle
