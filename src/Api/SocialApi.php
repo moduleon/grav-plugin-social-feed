@@ -41,7 +41,6 @@ abstract class SocialApi
      */
     public function getUserPostObjects($feed)
     {
-
         $socialPosts = $this->getUserPosts($feed);
         $postObjectList = [];
 

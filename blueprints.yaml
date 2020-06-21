@@ -83,16 +83,22 @@ form:
       title: Instagram config
       underline: true
       fields:
-        instagram_client_id:
-          type: text
-          label: Client id
-        instagram_access_token:
-          type: text
-          label: Access token
         instagram_feeds:
           type: list
           label: Accounts to follow (provide only the one corresponding to your access token)
           fields:
-            .username:
+            .userid:
               type: text
-              label: Username
+              label: User ID
+            .access_token:
+              type: text
+              label: Access token
+            .avatar:
+              type: file
+              label: Avatar
+              help: Fallback image if no user image available by api
+              destination: 'user/media'
+              multiple: false
+              autofocus: false
+              accept:
+                - image/*

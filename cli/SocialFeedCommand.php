@@ -93,14 +93,14 @@ class SocialFeedCommand extends ConsoleCommand
         }
         // Instagram api
         if (
-            isset($config['instagram_client_id']) && $config['instagram_client_id'] &&
-            isset($config['instagram_access_token']) && $config['instagram_access_token'] &&
             isset($config['instagram_feeds']) && count($config['instagram_feeds']) > 0
         ) {
-            $apis['instagram'] = new InstagramApi([
-                'client_secret' => $config['instagram_client_id'],
-                'access_token' => $config['instagram_access_token'],
-            ]);
+            foreach ($config['instagram_feeds'] as $instagram_feed) {
+                $apis['instagram'] = new InstagramApi([
+                    'userid' => $config['userid'],
+                    'access_token' => $config['access_token'],
+                ]);
+            }
         }
 
         return $apis;

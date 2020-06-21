@@ -164,6 +164,14 @@ class CustomPlugin extends Plugin
 }
 ```
 
+## Networks
+
+### Instagram
+To Fetch Posts form Instagram you need an user id (not the username) and an access token (preferably an long lived access token)
+There can be found many instructions on the internet. But most are outdated and not written for the new Instagram API.
+You need to create an app and keys on Facebook for Developers. This is a very good and actual manual: 
+https://levelup.gitconnected.com/getting-started-with-the-instagram-basic-display-api-5124c92c4935 
+
 ## Credits
 
 This plugin is mostly inspired by the symfony bundle
