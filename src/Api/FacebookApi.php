@@ -110,7 +110,10 @@ final class FacebookApi extends SocialApi
      *
      * @param string $url
      *
-     * @return getGraphNode
+     * @return array
+     *
+     *
+     * @throws \Exception
      */
     private function requestGet($url)
     {
@@ -128,13 +131,14 @@ final class FacebookApi extends SocialApi
         try {
             $response = file_get_contents($url . $this->config['access_token'], false, stream_context_create($arrContextOptions));
         } catch (Exception $e) {
-            echo $e->getMessage();
-            exit;
+            Grav::instance()['log']->error(sprintf($e->getMessage()));
+            throw new \Exception($e->getMessage());
         }
 
         if($response == false) {
-            echo "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['username'];
-            exit;
+            $errorMessage = "Something went wrong by getting the data of ". $this->providerName . " user: " . $this->config['username'] . " (response == false) => May username or access token wrong/outdated";
+            Grav::instance()['log']->error(sprintf($errorMessage));
+            throw new \Exception($errorMessage);
         }
 
         return json_decode($response, true);
