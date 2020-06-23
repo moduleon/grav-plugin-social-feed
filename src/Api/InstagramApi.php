@@ -19,6 +19,17 @@ final class InstagramApi extends SocialApi
     private $config;
 
     /**
+     *  get ssl config
+     */
+    public function __construct()
+    {
+        $grav = Grav::instance();
+        $config = $grav['config']->get('plugins.social-feed');
+        $this->config['enablessl'] = $config['enablessl'];
+        $this->config['certpath'] = $config['certpath'];
+    }
+
+    /**
      * {@inherit}.
      */
     public function getUserPosts($feed)
@@ -99,10 +110,20 @@ final class InstagramApi extends SocialApi
      */
     private function requestGet($url)
     {
-        try {
-            $response = @file_get_contents($url . $this->config['access_token']);
+        $arrContextOptions = array();
+
+        if($this->config['enablessl'] === false) {
+            $arrContextOptions['ssl']['verify_peer'] = false;
+            $arrContextOptions['ssl']['verify_peer_name'] = false;
         }
-        catch (Exception $e) {
+
+        if(isset($this->config['certpath']) && !empty($this->config['certpath'])) {
+            $arrContextOptions['ssl']['cafile'] = $this->config['certpath'];
+        }
+
+        try {
+            $response = file_get_contents($url . $this->config['access_token'], false, stream_context_create($arrContextOptions));
+        } catch (Exception $e) {
             echo $e->getMessage();
             exit;
         }
