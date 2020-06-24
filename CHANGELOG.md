@@ -1,4 +1,11 @@
-# v0.3.0
+# v1.0.0
+##  24/06/2020
+
+1. [](#new)
+	* Replace deprecated instagram legacy API by instagram basic display API 
+1. [](#improved)
+    * Remove facebook api dependency and fetch facebook data as same as instagram data
+    
 ##  21/01/2020
 
 1. [](#new)
