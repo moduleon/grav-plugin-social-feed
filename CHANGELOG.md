@@ -1,4 +1,9 @@
-# v1.0.0
+# v1.1.0
+##  28/09/2020
+
+1. [](#new)
+	* Add the possibility to send mail if data could not be received
+
 ##  24/06/2020
 
 1. [](#new)
