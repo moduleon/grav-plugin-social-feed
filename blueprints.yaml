@@ -39,6 +39,12 @@ form:
       label: 'Path to SSL Cert (cafile)'
       placeholder: default
       help: 'Leave blank, if not known'
+    mail:
+      type: text
+      label: 'Mail'
+      help: 'Mail for error messages'
+      validate:
+        type: email
     twitter:
       type: section
       title: Twitter config

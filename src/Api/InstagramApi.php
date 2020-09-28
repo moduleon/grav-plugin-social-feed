@@ -132,6 +132,7 @@ final class InstagramApi extends SocialApi
 
         if($response == false) {
             $errorMessage = "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['userid'] . " (response == false) => May username or access token wrong/outdated";
+            $this->errorMail($errorMessage);
             Grav::instance()['log']->error(sprintf($errorMessage));
             throw new \Exception($errorMessage);
         }
