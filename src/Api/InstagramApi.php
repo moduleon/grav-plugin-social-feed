@@ -42,7 +42,7 @@ final class InstagramApi extends SocialApi
             $this->config['avatar'] = array_key_first($feed['avatar']);
 
             $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username';
-            $response = $this->requestGet('https://graph.instagram.com/'.$this->config['userid'].'/media' . $fields);
+            $response = $this->requestGet('https://graph.facebook.com/'.$this->config['userid'].'/media' . $fields);
             return $response['data'];
         }
 
