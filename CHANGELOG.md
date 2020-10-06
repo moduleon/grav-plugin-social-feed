@@ -1,3 +1,9 @@
+# v1.1.1
+##  06/10/2020
+
+1. [](#improved)
+	* Set fix version for instagram and facebook api
+	
 # v1.1.0
 ##  28/09/2020
 
