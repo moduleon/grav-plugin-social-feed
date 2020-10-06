@@ -41,7 +41,7 @@ final class FacebookApi extends SocialApi
         }
 
         $fields = '?fields=full_picture,from,message,id,permalink_url,created_time';
-        $response = $this->requestGet('https://graph.facebook.com/'.$this->config['username'].'/posts' . $fields);
+        $response = $this->requestGet('https://graph.facebook.com/v8.0/'.$this->config['username'].'/posts' . $fields);
         return $response['data'];
     }
 
@@ -61,7 +61,7 @@ final class FacebookApi extends SocialApi
 
         //creator username and image
         $fields = '?fields=username,picture';
-        $userDetails = $this->requestGet('https://graph.facebook.com/'.$socialPost['from']['id'] . $fields);
+        $userDetails = $this->requestGet('https://graph.facebook.com/v8.0/'.$socialPost['from']['id'] . $fields);
 
         if (empty($userDetails)) {
             return false;

@@ -42,7 +42,7 @@ final class InstagramApi extends SocialApi
             $this->config['avatar'] = array_key_first($feed['avatar']);
 
             $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username';
-            $response = $this->requestGet('https://graph.facebook.com/'.$this->config['userid'].'/media' . $fields);
+            $response = $this->requestGet('https://graph.facebook.com/v8.0/'.$this->config['userid'].'/media' . $fields);
             return $response['data'];
         }
 
@@ -66,7 +66,7 @@ final class InstagramApi extends SocialApi
          */
         $post->setAuthorFileUrl($this->config['avatar']);
         //$fields = '?fields=account_type,id,media_count,username';
-        //$userData = $this->requestGet('https://graph.instagram.com/' . $this->config['userid'] . $fields);
+        //$userData = $this->requestGet('https://graph.instagram.com/v8.0/' . $this->config['userid'] . $fields);
         //$post->setAuthorName($userData['name']);
         //$post->setAuthorFileUrl($userData['avatar']);
 
