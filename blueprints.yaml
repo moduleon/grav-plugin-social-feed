@@ -93,12 +93,3 @@ form:
             .access_token:
               type: text
               label: Access token
-            .avatar:
-              type: file
-              label: Avatar
-              help: Fallback image if no user image available by api
-              destination: 'user/media'
-              multiple: false
-              autofocus: false
-              accept:
-                - image/*

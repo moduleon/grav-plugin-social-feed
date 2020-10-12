@@ -60,15 +60,9 @@ final class InstagramApi extends SocialApi
         $post->setPostId($socialPost['id']);
         $post->setAuthorUsername($socialPost['username']);
 
-        /*
-         * For now it is not possible to get name and avatar by instagram api
-         * @todo fetch user media as soon as it is possible by instagram api
-         */
-        $post->setAuthorFileUrl($this->config['avatar']);
-        //$fields = '?fields=account_type,id,media_count,username';
-        //$userData = $this->requestGet('https://graph.instagram.com/v8.0/' . $this->config['userid'] . $fields);
-        //$post->setAuthorName($userData['name']);
-        //$post->setAuthorFileUrl($userData['avatar']);
+        $fields = '?fields=profile_picture_url';
+        $userData = $this->requestGet('https://graph.facebook.com/v8.0/' . $this->config['userid'] . $fields);
+        $post->setAuthorFileUrl($userData['profile_picture_url']);
 
         $post->setHeadline(strip_tags($socialPost['caption']));
 
