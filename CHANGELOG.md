@@ -1,3 +1,10 @@
+# v1.2.0
+##  12/10/2020
+
+1. [](#improved)
+	* fetch instagram user poster direct from api
+	* remove old instagram poster field from blueprints
+	
 # v1.1.1
 ##  06/10/2020
 
