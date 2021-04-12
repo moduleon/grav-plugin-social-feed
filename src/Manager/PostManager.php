@@ -189,17 +189,21 @@ class PostManager
             mkdir($uploadDir);
         }
 
-        // Author picture - Updated every 15 min maximum.
+        // Author picture - Update every 24h
         if ($post->getAuthorFileUrl()) {
             $basename = $post->getProvider().'_'.$post->getAuthorUsername();
             $files = glob($uploadDir.'/'.$basename.'.*');
-            if (0 === count($files) || 900 > (time() - filemtime($files[0]))) {
+            if (0 === count($files) || 86400 < (time() - filemtime($files[0]))) {
                 $filename = $this->downloadFile($post->getAuthorFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filename);
                 } else {
                     $post->setAuthorFileUrl(null);
                 }
+            } else {
+                // set file if found locally
+                $filepath = explode('/', $files[0]);
+                $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
             }
         }
 
