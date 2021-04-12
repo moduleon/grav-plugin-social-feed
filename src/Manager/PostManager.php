@@ -56,7 +56,7 @@ class PostManager
                 $postTags = json_decode($post['tags']);
 
                 foreach ($params['tags'] as $tag) {
-                    if (in_array($tag, $postTags)) {
+                    if (in_array(strtolower($tag), $postTags)) {
                         $hasTag=1;
                     }
                 }
