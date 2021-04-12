@@ -1,3 +1,10 @@
+# v1.3.1
+##  12/04/2021
+
+1. [](#improved)
+	* Update post author image download
+    * Ignore uppercase letters in tags compare
+
 # v1.3.0
 ##  12/04/2021
 
