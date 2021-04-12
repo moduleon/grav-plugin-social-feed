@@ -40,7 +40,7 @@ final class FacebookApi extends SocialApi
             $this->config['access_token'] = "&access_token=".$feed['accesstoken'];
         }
 
-        $fields = '?fields=full_picture,from,message,id,permalink_url,created_time';
+        $fields = '?fields=full_picture,from,message,message_tags,id,permalink_url,created_time';
         $response = $this->requestGet('https://graph.facebook.com/v8.0/'.$this->config['username'].'/posts' . $fields);
         return $response['data'];
     }
@@ -50,6 +50,7 @@ final class FacebookApi extends SocialApi
      */
     protected function getMappedPostObject($socialPost)
     {
+
         $post = new Post();
 
         //body
@@ -79,6 +80,15 @@ final class FacebookApi extends SocialApi
         $post->setPostId($socialPost['id']);
         $post->setProvider($this->providerName);
         $post->setLink($socialPost['permalink_url']);
+
+        // Get Tags
+        $tags = [];
+        if($socialPost['message_tags']) {
+            foreach ($socialPost['message_tags'] as &$tag) {
+                $tags[] = $tag['name'];
+            }
+        }
+        $post->setTags(json_encode($tags));
 
         $publishAt = new \DateTime($socialPost['created_time']);
         $post->setPublishedAt($publishAt);

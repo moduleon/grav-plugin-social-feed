@@ -48,6 +48,23 @@ class PostManager
                     continue;
                 }
             }
+            if (isset($params['tags'])) {
+                if(!$post['tags']) {
+                    continue;
+                }
+                $hasTag=0;
+                $postTags = json_decode($post['tags']);
+
+                foreach ($params['tags'] as $tag) {
+                    if (in_array($tag, $postTags)) {
+                        $hasTag=1;
+                    }
+                }
+
+                if($hasTag==0) {
+                    continue;
+                }
+            }
             $posts[] = $post;
         }
         // Sort posts
@@ -126,6 +143,7 @@ class PostManager
                     'authorFileUrl' => $post->getAuthorFileUrl(),
                     'headline' => $post->getHeadline(),
                     'body' => $post->getBody(),
+                    'tags' => $post->getTags(),
                     'fileUrl' => $post->getFileUrl(),
                     'link' => $post->getLink(),
                     'publishedAt' => $post->getPublishedAt()->format('Y-m-d H:i:s'),
