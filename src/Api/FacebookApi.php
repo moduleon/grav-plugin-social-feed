@@ -4,7 +4,6 @@ namespace Grav\Plugin\SocialFeed\Api;
 
 use Grav\Common\Grav;
 use Grav\Plugin\SocialFeed\Model\Post;
-use Facebook\Facebook;
 
 final class FacebookApi extends SocialApi
 {
@@ -27,6 +26,7 @@ final class FacebookApi extends SocialApi
         $config = $grav['config']->get('plugins.social-feed');
         $this->config['enablessl'] = $config['enablessl'];
         $this->config['certpath'] = $config['certpath'];
+        $this->config['facebook_api_version'] = $config['facebook_api_version'];
     }
 
     /**
@@ -41,7 +41,7 @@ final class FacebookApi extends SocialApi
         }
 
         $fields = '?fields=full_picture,from,message,message_tags,id,permalink_url,created_time';
-        $response = $this->requestGet('https://graph.facebook.com/v8.0/'.$this->config['username'].'/posts' . $fields);
+        $response = $this->requestGet('https://graph.facebook.com/v'.$this->config['facebook_api_version'].'/'.$this->config['username'].'/posts' . $fields);
         return $response['data'];
     }
 
@@ -62,7 +62,7 @@ final class FacebookApi extends SocialApi
 
         //creator username and image
         $fields = '?fields=username,picture';
-        $userDetails = $this->requestGet('https://graph.facebook.com/v8.0/'.$socialPost['from']['id'] . $fields);
+        $userDetails = $this->requestGet('https://graph.facebook.com/v' . $this->config['facebook_api_version'] . '/'.$socialPost['from']['id'] . $fields);
 
         if (empty($userDetails)) {
             return false;

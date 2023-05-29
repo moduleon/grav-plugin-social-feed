@@ -55,6 +55,11 @@ class Post
     /**
      * @var string
      */
+    private $thumbnailUrl;
+
+    /**
+     * @var string
+     */
     private $link;
 
     /**
@@ -71,6 +76,16 @@ class Post
      * @var string
      */
     private $originalPostId;
+
+    /**
+     * @var string
+     */
+    private $mediaProductType;
+
+    /**
+     * @var string
+     */
+    private $mediaType;
 
     /**
      * @return string
@@ -255,6 +270,26 @@ class Post
     /**
      * @return string|null
      */
+    public function getThumbnailUrl()
+    {
+        return $this->thumbnailUrl;
+    }
+
+    /**
+     * @param string|null $thumbnailUrl
+     *
+     * @return Post
+     */
+    public function setThumbnailUrl($thumbnailUrl)
+    {
+        $this->thumbnailUrl = $thumbnailUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getLink()
     {
         return $this->link;
@@ -346,6 +381,46 @@ class Post
     public function setOriginalPostId($originalPostId)
     {
         $this->originalPostId = $originalPostId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaProductType()
+    {
+        return $this->mediaProductType;
+    }
+
+    /**
+     * @param string $mediaProductType
+     *
+     * @return Post
+     */
+    public function setMediaProductType($mediaProductType)
+    {
+        $this->mediaProductType = $mediaProductType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaType()
+    {
+        return $this->mediaType;
+    }
+
+    /**
+     * @param string $mediaType
+     *
+     * @return Post
+     */
+    public function setMediaType($mediaType)
+    {
+        $this->mediaType = $mediaType;
 
         return $this;
     }

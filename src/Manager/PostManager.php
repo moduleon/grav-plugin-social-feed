@@ -145,7 +145,10 @@ class PostManager
                     'body' => $post->getBody(),
                     'tags' => $post->getTags(),
                     'fileUrl' => $post->getFileUrl(),
+                    'thumbnailUrl' => $post->getThumbnailUrl(),
                     'link' => $post->getLink(),
+                    'mediaProductType' => $post->getMediaProductType(),
+                    'mediaType' => $post->getMediaType(),
                     'publishedAt' => $post->getPublishedAt()->format('Y-m-d H:i:s'),
                     'duplicated' => false,
                     'originalPostId' => ''
@@ -212,6 +215,7 @@ class PostManager
             $basename = $post->getProvider().'_'.$post->getPostId();
             $files = glob($uploadDir.'/'.$basename.'.*');
             if (0 === count($files)) {
+                //file not found local
                 $filename = $this->downloadFile($post->getFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setFileUrl($this->getMediaUrl().'/'.$filename);
@@ -222,6 +226,25 @@ class PostManager
                 // set file if found locally
                 $filepath = explode('/', $files[0]);
                 $post->setFileUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
+            }
+        }
+
+        // Post file - Downloaded if not found locally.
+        if ($post->getThumbnailUrl()) {
+            $basename = $post->getProvider().'_'.$post->getPostId().'_thumb';
+            $files = glob($uploadDir.'/'.$basename.'.*');
+            if (0 === count($files)) {
+                //file not found local
+                $filename = $this->downloadFile($post->getThumbnailUrl(), $basename, $uploadDir);
+                if ($filename) {
+                    $post->setThumbnailUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setThumbnailUrl(null);
+                }
+            } else {
+                // set file if found locally
+                $filepath = explode('/', $files[0]);
+                $post->setThumbnailUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
             }
         }
     }
@@ -259,7 +282,7 @@ class PostManager
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $storageFile);
         $ext = strtolower(explode('/', $mime)[1]);
-        if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'mp4'])) {
             $filename = $basename.'.'.$ext;
             $destination = $dir.'/'.$filename;
             copy($storageFile, $destination);

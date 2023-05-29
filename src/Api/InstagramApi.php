@@ -4,7 +4,6 @@ namespace Grav\Plugin\SocialFeed\Api;
 
 use Grav\Common\Grav;
 use Grav\Plugin\SocialFeed\Model\Post;
-use Instagram\Instagram;
 
 final class InstagramApi extends SocialApi
 {
@@ -27,6 +26,9 @@ final class InstagramApi extends SocialApi
         $config = $grav['config']->get('plugins.social-feed');
         $this->config['enablessl'] = $config['enablessl'];
         $this->config['certpath'] = $config['certpath'];
+        $this->config['instagram_api_version'] = $config['instagram_api_version'];
+        $this->config['instagram_media'] = $config['instagram_media'];
+        $this->config['instagram_stories'] = $config['instagram_stories'];
     }
 
     /**
@@ -34,19 +36,27 @@ final class InstagramApi extends SocialApi
      */
     public function getUserPosts($feed)
     {
-
         //save user accesstoken if is set
-        if(isset($feed['userid']) && !empty($feed['userid'])) {
+        if (isset($feed['userid']) && !empty($feed['userid'])) {
             $this->config['userid'] = $feed['userid'];
-            $this->config['access_token'] = "&access_token=".$feed['access_token'];
+            $this->config['access_token'] = "&access_token=" . $feed['access_token'];
             $this->config['avatar'] = array_key_first($feed['avatar']);
 
-            $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username';
-            $response = $this->requestGet('https://graph.facebook.com/v8.0/'.$this->config['userid'].'/media' . $fields);
-            return $response['data'];
+            $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username,media_product_type';
+            $response = [];
+
+            if ($this->config['instagram_media']) {
+                $media = $this->requestGet('https://graph.facebook.com/v' . $this->config['instagram_api_version'] . '/' . $this->config['userid'] . '/media' . $fields);
+                $response = array_merge($response, $media['data']);
+            }
+
+            if ($this->config['instagram_stories']) {
+                $stories = $this->requestGet('https://graph.facebook.com/v' . $this->config['instagram_api_version'] . '/' . $this->config['userid'] . '/stories' . $fields);
+                $response = array_merge($response, $stories['data']);
+            }
+
+            return $response;
         }
-
-
     }
 
     /**
@@ -61,7 +71,7 @@ final class InstagramApi extends SocialApi
         $post->setAuthorUsername($socialPost['username']);
 
         $fields = '?fields=profile_picture_url';
-        $userData = $this->requestGet('https://graph.facebook.com/v8.0/' . $this->config['userid'] . $fields);
+        $userData = $this->requestGet('https://graph.facebook.com/v' . $this->config['instagram_api_version'] . '/' . $this->config['userid'] . $fields);
         $post->setAuthorFileUrl($userData['profile_picture_url']);
 
         $post->setHeadline(strip_tags($socialPost['caption']));
@@ -73,6 +83,18 @@ final class InstagramApi extends SocialApi
 
         $publishAt = new \DateTime($socialPost['timestamp']);
         $post->setPublishedAt($publishAt);
+
+        if ($socialPost['media_type']) {
+            $post->setMediaType($socialPost['media_type']);
+        }
+
+        if ($socialPost['media_product_type']) {
+            $post->setMediaProductType($socialPost['media_product_type']);
+        }
+
+        if ($socialPost['thumbnail_url']) {
+            $post->setThumbnailUrl($socialPost['thumbnail_url']);
+        }
 
         return $post;
     }
@@ -108,12 +130,12 @@ final class InstagramApi extends SocialApi
     {
         $arrContextOptions = array();
 
-        if($this->config['enablessl'] === false) {
+        if ($this->config['enablessl'] === false) {
             $arrContextOptions['ssl']['verify_peer'] = false;
             $arrContextOptions['ssl']['verify_peer_name'] = false;
         }
 
-        if(isset($this->config['certpath']) && !empty($this->config['certpath'])) {
+        if (isset($this->config['certpath']) && !empty($this->config['certpath'])) {
             $arrContextOptions['ssl']['cafile'] = $this->config['certpath'];
         }
 
@@ -124,7 +146,7 @@ final class InstagramApi extends SocialApi
             throw new \Exception($e->getMessage());
         }
 
-        if($response == false) {
+        if ($response == false) {
             $errorMessage = "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['userid'] . " (response == false) => May username or access token wrong/outdated";
             $this->errorMail($errorMessage);
             Grav::instance()['log']->error(sprintf($errorMessage));

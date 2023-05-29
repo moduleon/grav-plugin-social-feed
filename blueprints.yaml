@@ -68,6 +68,10 @@ form:
       title: Facebook config
       underline: true
       fields:
+        facebook_api_version:
+          type: text
+          label: API Version
+          default: '17.0'
         facebook_feeds:
           type: list
           label: Accounts to follow
@@ -83,6 +87,32 @@ form:
       title: Instagram config
       underline: true
       fields:
+        instagram_api_version:
+          type: text
+          label: API Version
+          default: '17.0'
+        instagram_stories:
+          type: toggle
+          label: Stories
+          highlight: 1
+          default: 1
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
+          help: 'Get Instagram Stories'
+        instagram_media:
+          type: toggle
+          label: Media
+          highlight: 1
+          default: 1
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
+          help: 'Get Instagram Media'
         instagram_feeds:
           type: list
           label: Accounts to follow (provide only the one corresponding to your access token)
