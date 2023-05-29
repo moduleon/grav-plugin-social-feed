@@ -1,3 +1,10 @@
+# v1.4.0
+##  29/05/2021
+
+1. [](#new)
+	* Fetch instagram stories
+    * Specify facebook and instagram api version which will be used for fetch data
+
 # v1.3.1
 ##  12/04/2021
 
