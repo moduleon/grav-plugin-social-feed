@@ -1,3 +1,11 @@
+# v1.4.1
+##  31/05/2021
+
+1. [](#improved)
+    * add fetch url to error message
+1. [](#bugfix)
+    * remove unused avatar from instagram api
+
 # v1.4.0
 ##  29/05/2021
 
