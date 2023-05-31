@@ -40,7 +40,6 @@ final class InstagramApi extends SocialApi
         if (isset($feed['userid']) && !empty($feed['userid'])) {
             $this->config['userid'] = $feed['userid'];
             $this->config['access_token'] = "&access_token=" . $feed['access_token'];
-            $this->config['avatar'] = array_key_first($feed['avatar']);
 
             $fields = '?fields=caption,id,media_type,media_url,permalink,thumbnail_url,timestamp,username,media_product_type';
             $response = [];
@@ -147,7 +146,7 @@ final class InstagramApi extends SocialApi
         }
 
         if ($response == false) {
-            $errorMessage = "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['userid'] . " (response == false) => May username or access token wrong/outdated";
+            $errorMessage = "Something went wrong by getting the data of " . $this->providerName . " user: " . $this->config['userid'] . " (response == false) => May username or access token wrong/outdated. URL: " . $url . $this->config['access_token'];
             $this->errorMail($errorMessage);
             Grav::instance()['log']->error(sprintf($errorMessage));
             throw new \Exception($errorMessage);
