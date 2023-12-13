@@ -48,6 +48,23 @@ class PostManager
                     continue;
                 }
             }
+            if (isset($params['tags'])) {
+                if(!$post['tags']) {
+                    continue;
+                }
+                $hasTag=0;
+                $postTags = json_decode($post['tags']);
+
+                foreach ($params['tags'] as $tag) {
+                    if (in_array(strtolower($tag), $postTags)) {
+                        $hasTag=1;
+                    }
+                }
+
+                if($hasTag==0) {
+                    continue;
+                }
+            }
             $posts[] = $post;
         }
         // Sort posts
@@ -126,8 +143,12 @@ class PostManager
                     'authorFileUrl' => $post->getAuthorFileUrl(),
                     'headline' => $post->getHeadline(),
                     'body' => $post->getBody(),
+                    'tags' => $post->getTags(),
                     'fileUrl' => $post->getFileUrl(),
+                    'thumbnailUrl' => $post->getThumbnailUrl(),
                     'link' => $post->getLink(),
+                    'mediaProductType' => $post->getMediaProductType(),
+                    'mediaType' => $post->getMediaType(),
                     'publishedAt' => $post->getPublishedAt()->format('Y-m-d H:i:s'),
                     'duplicated' => false,
                     'originalPostId' => ''
@@ -171,17 +192,21 @@ class PostManager
             mkdir($uploadDir);
         }
 
-        // Author picture - Updated every 15 min maximum.
+        // Author picture - Update every 24h
         if ($post->getAuthorFileUrl()) {
             $basename = $post->getProvider().'_'.$post->getAuthorUsername();
             $files = glob($uploadDir.'/'.$basename.'.*');
-            if (0 === count($files) || 900 > (time() - filemtime($files[0]))) {
+            if (0 === count($files) || 86400 < (time() - filemtime($files[0]))) {
                 $filename = $this->downloadFile($post->getAuthorFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filename);
                 } else {
                     $post->setAuthorFileUrl(null);
                 }
+            } else {
+                // set file if found locally
+                $filepath = explode('/', $files[0]);
+                $post->setAuthorFileUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
             }
         }
 
@@ -190,6 +215,7 @@ class PostManager
             $basename = $post->getProvider().'_'.$post->getPostId();
             $files = glob($uploadDir.'/'.$basename.'.*');
             if (0 === count($files)) {
+                //file not found local
                 $filename = $this->downloadFile($post->getFileUrl(), $basename, $uploadDir);
                 if ($filename) {
                     $post->setFileUrl($this->getMediaUrl().'/'.$filename);
@@ -200,6 +226,25 @@ class PostManager
                 // set file if found locally
                 $filepath = explode('/', $files[0]);
                 $post->setFileUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
+            }
+        }
+
+        // Post file - Downloaded if not found locally.
+        if ($post->getThumbnailUrl()) {
+            $basename = $post->getProvider().'_'.$post->getPostId().'_thumb';
+            $files = glob($uploadDir.'/'.$basename.'.*');
+            if (0 === count($files)) {
+                //file not found local
+                $filename = $this->downloadFile($post->getThumbnailUrl(), $basename, $uploadDir);
+                if ($filename) {
+                    $post->setThumbnailUrl($this->getMediaUrl().'/'.$filename);
+                } else {
+                    $post->setThumbnailUrl(null);
+                }
+            } else {
+                // set file if found locally
+                $filepath = explode('/', $files[0]);
+                $post->setThumbnailUrl($this->getMediaUrl().'/'.$filepath[count($filepath)-1]);
             }
         }
     }
@@ -237,7 +282,7 @@ class PostManager
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $storageFile);
         $ext = strtolower(explode('/', $mime)[1]);
-        if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+        if (true === in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'mp4'])) {
             $filename = $basename.'.'.$ext;
             $destination = $dir.'/'.$filename;
             copy($storageFile, $destination);

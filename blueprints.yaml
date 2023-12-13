@@ -1,5 +1,5 @@
 name: Social Feed
-version: 0.3.0
+version: 1.4.1
 description: This Grav plugin allow you to fetch feeds from social networks, and give you tools for displaying them in your website.
 icon: share-alt
 author:
@@ -39,6 +39,12 @@ form:
       label: 'Path to SSL Cert (cafile)'
       placeholder: default
       help: 'Leave blank, if not known'
+    mail:
+      type: text
+      label: 'Mail'
+      help: 'Mail for error messages'
+      validate:
+        type: email
     twitter:
       type: section
       title: Twitter config
@@ -62,12 +68,10 @@ form:
       title: Facebook config
       underline: true
       fields:
-        facebook_app_id:
+        facebook_api_version:
           type: text
-          label: App id
-        facebook_app_secret:
-          type: text
-          label: App secret
+          label: API Version
+          default: '17.0'
         facebook_feeds:
           type: list
           label: Accounts to follow
@@ -83,16 +87,39 @@ form:
       title: Instagram config
       underline: true
       fields:
-        instagram_client_id:
+        instagram_api_version:
           type: text
-          label: Client id
-        instagram_access_token:
-          type: text
-          label: Access token
+          label: API Version
+          default: '17.0'
+        instagram_stories:
+          type: toggle
+          label: Stories
+          highlight: 1
+          default: 1
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
+          help: 'Get Instagram Stories'
+        instagram_media:
+          type: toggle
+          label: Media
+          highlight: 1
+          default: 1
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
+          help: 'Get Instagram Media'
         instagram_feeds:
           type: list
           label: Accounts to follow (provide only the one corresponding to your access token)
           fields:
-            .username:
+            .userid:
               type: text
-              label: Username
+              label: User ID
+            .access_token:
+              type: text
+              label: Access token
