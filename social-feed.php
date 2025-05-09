@@ -3,7 +3,6 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Plugin;
-use RocketTheme\Toolbox\Event\Event;
 use Grav\Plugin\SocialFeed\Twig\PostExtension;
 use Grav\Plugin\SocialFeed\Manager\PostManager;
 

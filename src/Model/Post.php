@@ -45,7 +45,17 @@ class Post
     /**
      * @var string
      */
+    private $tags;
+
+    /**
+     * @var string
+     */
     private $fileUrl;
+
+    /**
+     * @var string
+     */
+    private $thumbnailUrl;
 
     /**
      * @var string
@@ -66,6 +76,16 @@ class Post
      * @var string
      */
     private $originalPostId;
+
+    /**
+     * @var string
+     */
+    private $mediaProductType;
+
+    /**
+     * @var string
+     */
+    private $mediaType;
 
     /**
      * @return string
@@ -210,6 +230,26 @@ class Post
     /**
      * @return string|null
      */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param string|null $tags
+     *
+     * @return Post
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getFileUrl()
     {
         return $this->fileUrl;
@@ -223,6 +263,26 @@ class Post
     public function setFileUrl($fileUrl)
     {
         $this->fileUrl = $fileUrl;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getThumbnailUrl()
+    {
+        return $this->thumbnailUrl;
+    }
+
+    /**
+     * @param string|null $thumbnailUrl
+     *
+     * @return Post
+     */
+    public function setThumbnailUrl($thumbnailUrl)
+    {
+        $this->thumbnailUrl = $thumbnailUrl;
 
         return $this;
     }
@@ -321,6 +381,46 @@ class Post
     public function setOriginalPostId($originalPostId)
     {
         $this->originalPostId = $originalPostId;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaProductType()
+    {
+        return $this->mediaProductType;
+    }
+
+    /**
+     * @param string $mediaProductType
+     *
+     * @return Post
+     */
+    public function setMediaProductType($mediaProductType)
+    {
+        $this->mediaProductType = $mediaProductType;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMediaType()
+    {
+        return $this->mediaType;
+    }
+
+    /**
+     * @param string $mediaType
+     *
+     * @return Post
+     */
+    public function setMediaType($mediaType)
+    {
+        $this->mediaType = $mediaType;
 
         return $this;
     }

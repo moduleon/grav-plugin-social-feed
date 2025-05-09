@@ -1,8 +1,7 @@
 {
     "require": {
-        "php-instagram-api/php-instagram-api": "dev-master",
         "themattharris/tmhoauth": "~0.8.4",
-        "facebook/graph-sdk": "^5.7"
+        "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
         "psr-4": {
